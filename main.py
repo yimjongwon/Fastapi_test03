@@ -64,6 +64,7 @@ def postNew(writer: str = Form(...), title: str = Form(...), content: str = Form
     # 특정 경로로 요청을 다시 하도록 리이다이렉트 응답준다.
     return RedirectResponse("/post", status_code=302)
 
+
 @app.get("/post/delete/{num}")
 def postDelete(num: int, db: Session = Depends(get_db)):
     # DB에서 삭제할 sql 문 준비
