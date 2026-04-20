@@ -17,6 +17,7 @@
                     <th>제목</th>
                     <th>내용</th>
                     <th>작성일</th>
+                    <th>삭제</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +28,7 @@
                     <td>{{ post.title }}</td>
                     <td>{{ post.content }}</td>
                     <td>{{ post.created_at }}</td>
+                    <td><a href="/post/delete/{{ post.num }}" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
