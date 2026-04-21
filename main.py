@@ -85,7 +85,7 @@ def postDelete(num: int, db: Session = Depends(get_db)):
     return RedirectResponse("/post", status_code=302)
 
 @app.get("/post/edit/{num}", response_class=HTMLResponse)
-def postUpdateForm(num: int, request: Request, db: Session = Depends(get_db)):
+def editForm(num: int, request: Request, db: Session = Depends(get_db)):
     # 수정을 위해 기존 데이터를 가져오는 SQL
     query = text("""
         SELECT num, writer, title, content, created_at
@@ -104,7 +104,7 @@ def postUpdateForm(num: int, request: Request, db: Session = Depends(get_db)):
     )
 
 @app.post("/post/edit/{num}")
-def postUpdate(num: int, title: str = Form(...), content: str = Form(...), 
+def edit(request:Request, num: int, title: str = Form(...), content: str = Form(...), 
                db: Session = Depends(get_db)):
     # DB에 수정할 sql 문 준비
     query = text("""
@@ -112,8 +112,14 @@ def postUpdate(num: int, title: str = Form(...), content: str = Form(...),
         SET title = :title, content = :content
         WHERE num = :num
     """)
-    db.execute(query, {"title": title, "content": content, "num": num})
+    db.execute(query, {"num": num,"title": title, "content": content})
     db.commit()
 
-    # 수정 후 목록으로 리다이렉트
-    return RedirectResponse("/post", status_code=302)
+    return templates.TemplateResponse(
+        request=request, 
+        name="post/alert.html",
+        context={
+            "msg":"글 정보를 수정 했습니다!",
+            "url":"/post"
+        }
+    )
