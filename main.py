@@ -75,7 +75,7 @@ def postDelete(num: int, db: Session = Depends(get_db)):
     db.execute(query, {"num": num})
     db.commit()
 
-    # 삭제 후 목록으로 리다이렉트
+    # 삭제 후 목록(/post)으로 리다이렉트
     return RedirectResponse("/post", status_code=302)
 
 @app.get("/post/update/{num}", response_class=HTMLResponse)
