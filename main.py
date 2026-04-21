@@ -84,24 +84,26 @@ def postDelete(num: int, db: Session = Depends(get_db)):
     # 삭제 후 목록(/post)으로 리다이렉트
     return RedirectResponse("/post", status_code=302)
 
-@app.get("/post/update/{num}", response_class=HTMLResponse)
+@app.get("/post/edit/{num}", response_class=HTMLResponse)
 def postUpdateForm(num: int, request: Request, db: Session = Depends(get_db)):
     # 수정을 위해 기존 데이터를 가져오는 SQL
     query = text("""
-        SELECT num, writer, title, content
+        SELECT num, writer, title, content, created_at
         FROM post
         WHERE num = :num
     """)
-    result = db.execute(query, {"num": num})
-    post = result.fetchone()
+    row = db.execute(query, {"num": num}).fetchone()
     
+    #pk 를 이용해서 select하는거여서 row는 1개다.따라서 .fetchone()함수 요청
     return templates.TemplateResponse(
         request=request, 
-        name="post/update-form.html", 
-        context={"post": post}
+        name="post/edit.html", 
+        context={
+            "post": row
+        }
     )
 
-@app.post("/post/update/{num}")
+@app.post("/post/edit/{num}")
 def postUpdate(num: int, title: str = Form(...), content: str = Form(...), 
                db: Session = Depends(get_db)):
     # DB에 수정할 sql 문 준비
