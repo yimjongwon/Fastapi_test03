@@ -50,7 +50,7 @@ def postNew(request: Request):
     return templates.TemplateResponse(request=request, name="post/new-form.html")
 
 @app.post("/post/new")
-def postNew(writer: str = Form(...), title: str = Form(...), content: str = Form(...), 
+def postNew(request: Request, writer: str = Form(...), title: str = Form(...), content: str = Form(...), 
             db: Session = Depends(get_db)):
     #DB에 저장할 sql 문 준비
     query = text("""
@@ -62,8 +62,14 @@ def postNew(writer: str = Form(...), title: str = Form(...), content: str = Form
     db.commit()
 
     # 특정 경로로 요청을 다시 하도록 리이다이렉트 응답준다.
-    return RedirectResponse("/post", status_code=302)
-
+    # return RedirectResponse("/post", status_code=302)
+    return templates.TemplateResponse(
+        request=request, 
+        name="post/alert.html",
+        context={
+            "msg": "글 정보를 추가 했습니다!",
+            "url": "/post"
+        })
 
 @app.get("/post/delete/{num}")
 def postDelete(num: int, db: Session = Depends(get_db)):
